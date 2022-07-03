@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<project name="scala-tests" default="build" basedir=".">
+
+    <!-- ======================================================== -->
+    <!-- Initialization of all property settings                  -->
+    <!-- ======================================================== -->
+    <!-- <property file="local-environment.properties"/> -->
+
+    <property name="root.dir" value="D:/dev/scala-ant-test"/>
+    <property name="ant.root.dir" value="D:/dev/scala-ant"/>
+    <property name="apache-cli.jar" value="${root.dir}/commons-cli-1.5.0/commons-cli-1.5.0.jar" />
+    <property name="scala.home.2" value="${root.dir}/scala-2.13.8" />
+    <property name="scala.home.3" value="${root.dir}/scala3-3.1.3" />
+    <property name="scala-library.jar.2" value="${scala.home.2}/lib/scala-library.jar" />
+    <property name="scala-library.jar.3" value="${scala.home.3}/lib/scala3-library_3-3.1.3.jar" />
+    <property name="scala-ant.jar" value="${ant.root.dir}/build/libs/scala-ant-2022.7.3.jar" />
+
+    <taskdef resource="scala/tools/ant/nsc/antlib.xml">
+        <classpath>
+            <fileset dir="${scala.home.2}/lib">
+                <include name="*.jar" />
+            </fileset>
+            <pathelement location="${scala-ant.jar}" />
+        </classpath>
+    </taskdef>
+
+    <taskdef resource="scala/tools/ant/dotty/antlib.xml">
+        <classpath>
+            <fileset dir="${scala.home.3}/lib">
+                <include name="*.jar" />
+            </fileset>
+            <pathelement location="${scala-ant.jar}" />
+        </classpath>
+    </taskdef>
+
+    <path id="scala.classpath">
+        <pathelement path="${scala-library.jar.2}" />
+        <pathelement path="${scala-library.jar.3}" />
+    </path>
+
+    <target name="prepare">
+        <mkdir dir="build"/>
+    </target>
+
+    <target name="build">
+        <antcall target="prepare"/>
+
+        <scalac2 destdir="build" deprecation="true" addparams="-Werror -feature" unchecked="true" release="11">
+            <classpath>
+                <path refid="scala.classpath" />
+                <pathelement path="${apache-cli.jar}" />
+            </classpath>
+            <sourcepath>
+                <pathelement path="src"/>
+            </sourcepath>
+            <src path="src"/>
+        </scalac2>
+
+        <javac destdir="build" includeAntRuntime="false" release="11">
+            <classpath>
+                <path refid="scala.classpath" />
+                <pathelement path="${apache-cli.jar}" />
+            </classpath>
+            <src path="src"/>
+        </javac>
+    </target>
+
+</project>
